@@ -1,0 +1,31 @@
+table {
+    margin-right: 80%;
+}
+table td {
+    margin-left: 15px; /* Отступ слева */
+    border: 1px solid #000; /* Рамка вокруг текста */
+    padding: 10px; /* Поля вокруг текста */
+    margin-left: 5px;
+    background-color: azure;
+}
+#notes{
+    align-content: center;
+    margin-top: 20px;
+    width: 400px;
+}
+#sign{
+    align-content: center;
+    margin-top: 20px;
+}
+body {
+    background-color: #e3dfd0;
+}
+h1 {
+    color: #8787cb;
+}
+p {
+    color: #230f0f;
+}
+#error {
+    color: red;
+}
