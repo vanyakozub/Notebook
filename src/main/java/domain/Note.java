@@ -58,4 +58,12 @@ public class Note {
     public int hashCode() {
         return id;
     }
+
+    public Note(Integer id, String header, String name, String description, String email) {
+        this.id = id;
+        this.header = header;
+        this.name = name;
+        this.description = description;
+        this.email = email;
+    }
 }
