@@ -58,7 +58,6 @@
                 <configuration>
                     <excludes>
                         <exclude>**/DBHelperStressTest.java</exclude>
-                        <exclude>**/DBHelperTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

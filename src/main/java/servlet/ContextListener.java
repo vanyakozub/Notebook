@@ -15,8 +15,8 @@ public class ContextListener implements ServletContextListener {
             //start database
             Class.forName("org.postgresql.Driver");
             DBHelper.init();
-        } catch (SQLException | IOException | ClassNotFoundException ex) {
-            System.out.println("Exception in context initialized listener " + ex);
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
     }
     @Override
@@ -27,7 +27,7 @@ public class ContextListener implements ServletContextListener {
                 DBHelper.getInitialConnection().close();
             }
         } catch (SQLException | NullPointerException ex) {
-            System.out.println("Exception in context destroyed listener " + ex);
+            ex.printStackTrace();
         }
     }
 }

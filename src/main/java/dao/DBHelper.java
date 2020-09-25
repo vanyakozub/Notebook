@@ -1,13 +1,14 @@
 package dao;
 
 import domain.Note;
-
-import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.LinkedList;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -16,48 +17,125 @@ import com.google.common.cache.RemovalNotification;
 import domain.User;
 
 public class DBHelper {
+    /**
+     * Constant. URL address of DB.
+     */
     static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/notebookdb";
+    /**
+     * Constant. Initial connection.
+     */
+    private static Connection initialConnection;
+    /**
+     * Constant. Number of connections DB.
+     */
+    static final int NUMBER_OF_CONNECTIONS = 30;
+    /**
+     * Number of current connection.
+     */
+    static volatile int currentConnection = 0;
+    /**
+     * Cache loader.
+     */
+    private static CacheLoader<Integer, ConnectionHolder> loader;
+    /**
+     * Loading cache.
+     */
+    private static LoadingCache<Integer, ConnectionHolder> cache;
+    /**
+     * Removal Listener.
+     */
+    private static RemovalListener<Integer, ConnectionHolder> listener;
+    /**
+     * Constant. Name of table in DB.
+     */
+    static final String NOTEBOOK = "notebook";
+    /**
+     * Constant. Field in notebook.
+     */
+    static final String NOTE_HEADER = "header";
+    /**
+     * Constant. Field in notebook.
+     */
+    static final String NOTE_OWNER_NAME = "name";
+    /**
+     * Constant. Field in notebook.
+     */
+    static final String NOTE_DESCRIPTION = "description";
+    /**
+     * Constant. Field in notebook.
+     */
+    static final String ID = "id";
+    /**
+     * Constant. Name of table in DB.
+     */
+    static final String USERS = "users";
+    /**
+     * Constant. Field in users.
+     */
+    static final String FIRSTNAME = "firstname";
+    /**
+     * Constant. Field in users.
+     */
+    static final String LASTNAME = "lastname";
+    /**
+     * Constant. Field in users.
+     */
+    static final String EMAIL = "email";
+    /**
+     * Constant. Field in users.
+     */
+    static final String PASSWORD = "password";
+    /**
+     * Constant. Command for PreparedStatement.
+     */
+    static final String SELECT_NOTE_SQL = "SELECT " + ID + ", " + NOTE_HEADER + ",  " + NOTE_OWNER_NAME + ",  "
+            + NOTE_DESCRIPTION + ",  " + EMAIL + " FROM " + NOTEBOOK;
+    /**
+     * Constant. Command for PreparedStatement.
+     */
+    static final String DELETE_NOTE_SQL = "DELETE FROM " + NOTEBOOK + " WHERE " + ID + " = ?";
+    /**
+     * Constant. Command for PreparedStatement.
+     */
+    static final String SELECT_USER_SQL = "SELECT " + FIRSTNAME + ",  " + LASTNAME + ",  " + EMAIL +", "
+            + PASSWORD + " FROM " + USERS + " WHERE " + EMAIL + " = ?";
+    /**
+     * Constant. Command for PreparedStatement.
+     */
+    static final String ADD_NOTE_SQL = "INSERT INTO " + NOTEBOOK + " (" + NOTE_HEADER + ", "
+            + NOTE_OWNER_NAME + ", " + NOTE_DESCRIPTION + ", " + EMAIL + ") VALUES (?,?,?,?)";
+    /**
+     * Constant. Command for PreparedStatement.
+     */
+    static final String CREATE_USER_SQL = "INSERT INTO " + USERS + " ("+ FIRSTNAME + ",  " + LASTNAME + ",  "
+            + EMAIL + ", password) VALUES (?,?,?,?)";
+    /**
+     * Constant. Command for PreparedStatement.
+     */
+    static final String DELETE_USER_SQL = "DELETE FROM " + USERS + " WHERE " + EMAIL + " = ?";
+    /**
+     * Constant. Command for PreparedStatement.
+     */
+    static final String SELECT_ALL_USERS = "SELECT * FROM " + USERS;
 
+    /**
+     *
+     * @return Initial connection
+     */
     public static Connection getInitialConnection() {
         return initialConnection;
     }
 
-    private static Connection initialConnection;
-
-    static final int NUMBER_OF_CONNECTIONS = 30;
-    static volatile int currentConnection = 0;
-
-    private static CacheLoader<Integer, ConnectionHolder> loader;
-    private static LoadingCache<Integer, ConnectionHolder> cache;
-    private static RemovalListener<Integer, ConnectionHolder> listener;
-
-
-    static final String NOTEBOOK = "notebook";
-    static final String NOTE_HEADER = "header";
-    static final String NOTE_OWNER_NAME = "name";
-    static final String NOTE_DESCRIPTION = "description";
-    static final String ID = "id";
-    static final String USERS = "users";
-    static final String FIRSTNAME = "firstname";
-    static final String LASTNAME = "lastname";
-    static final String EMAIL = "email";
-    static final String PASSWORD = "password";
-    static final String SELECT_NOTE_SQL = "SELECT " +ID +", " + NOTE_HEADER + ",  " + NOTE_OWNER_NAME + ",  " + NOTE_DESCRIPTION + ",  " + EMAIL + " FROM " + NOTEBOOK;
-    static final String DELETE_NOTE_SQL = "DELETE FROM " + NOTEBOOK + " WHERE " + ID + " = ?";
-    static final String SELECT_USER_SQL = "SELECT " + FIRSTNAME + ",  " + LASTNAME + ",  " + EMAIL+", " + PASSWORD + " FROM " + USERS + " WHERE " + EMAIL + " = ?";
-    static final String ADD_NOTE_SQL = "INSERT INTO " + NOTEBOOK + " (" + NOTE_HEADER + ", " + NOTE_OWNER_NAME +", " + NOTE_DESCRIPTION + ", " + EMAIL + ") VALUES (?,?,?,?)";
-    static final String CREATE_USER_SQL = "INSERT INTO " +USERS+ " ("+ FIRSTNAME + ",  " + LASTNAME + ",  " + EMAIL + ", password) VALUES (?,?,?,?)";
-    static final String DELETE_USER_SQL = "DELETE FROM " + USERS + " WHERE " + EMAIL + " = ?";
-    static final String SELECT_ALL_USERS = "SELECT * FROM " + USERS;
-    public static void init() throws IOException, SQLException {
-        System.out.println("init - Instead of @PostConstruct");
-        //Init cache loader. Code is used to create new connections and statements
+    /**
+     * Initialization of DBHelper
+     * @throws SQLException
+     */
+    public static void init() throws SQLException {
         loader = new CacheLoader<Integer, ConnectionHolder>() {
             @Override
             public ConnectionHolder load(Integer key) {
                 try {
                     ConnectionHolder connectionHolder = new ConnectionHolder();
-                    //System.out.println("Creating new ConnectionHolder for key " + key);
                     connectionHolder.setConnection(DriverManager.getConnection(DATABASE_URL, "postgres", "0000"));
                     connectionHolder.getConnection().setAutoCommit(false);
                     connectionHolder.setNoteStatement(connectionHolder.getConnection().prepareStatement(SELECT_NOTE_SQL));
@@ -69,25 +147,22 @@ public class DBHelper {
                     connectionHolder.setGetUserStatement(connectionHolder.getConnection().prepareStatement(SELECT_USER_SQL));
                     return connectionHolder;
                 } catch (SQLException e) {
-                    //System.out.println("Exception getting connection to database " + e);
+                    e.printStackTrace();
                     return null;
                 }
             }
         };
-
-        //Eviction listener. Code is used to close expired connections
         listener = new RemovalListener<Integer, ConnectionHolder>() {
             @Override
             public void onRemoval(RemovalNotification<Integer, ConnectionHolder> n) {
                 if (n.wasEvicted()) {
                     try {
                         synchronized (n.getValue().getConnection()) {
-                            //System.out.println("Closing old connection for key " + n.getKey());
                             n.getValue().getNoteStatement().close();
                             n.getValue().getConnection().close();
                         }
                     } catch (SQLException ex) {
-                        //System.out.println("Exception closing connection to database " + ex);
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -95,11 +170,21 @@ public class DBHelper {
         cache = CacheBuilder.newBuilder().refreshAfterWrite(1, TimeUnit.MINUTES).removalListener(listener).build(loader);
     }
 
+    /**
+     *
+     * @return PreparedStatement to get all notes
+     * @throws SQLException
+     */
     private static PreparedStatement getNoteStatement() throws SQLException {
         currentConnection = (currentConnection + 1) % NUMBER_OF_CONNECTIONS;
         return cache.getUnchecked(currentConnection).getNoteStatement();
     }
 
+    /**
+     *
+     * @return List of notes
+     * @throws SQLException
+     */
     public static List<Note> getAllNotes() throws SQLException {
         List<Note> result = new LinkedList<>();
         PreparedStatement stmt = getNoteStatement();
@@ -119,15 +204,23 @@ public class DBHelper {
         }
     }
 
+    /**
+     *
+     * @return PreparedStatement to delete all notes
+     * @throws SQLException
+     */
     private static PreparedStatement getDeleteNoteStatement() throws SQLException {
         currentConnection = (currentConnection + 1) % NUMBER_OF_CONNECTIONS;
         return cache.getUnchecked(currentConnection).getDeleteNoteStatement();
     }
 
+    /**
+     *
+     * @param id Note's id which need to be deleted
+     * @throws SQLException
+     */
     public static void deleteNote(Integer id) throws SQLException {
-
         PreparedStatement stmt = getDeleteNoteStatement();
-
         synchronized (stmt.getConnection()) {
             try {
                 stmt.setInt(1, id);
@@ -138,14 +231,23 @@ public class DBHelper {
                 throw e;
             }
         }
-
-        //System.out.println("Note with id= " + id + " has been deleted");
     }
+
+    /**
+     *
+     * @return PreparedStatement to delete user
+     * @throws SQLException
+     */
     private static PreparedStatement getDeleteUserStatement() throws SQLException {
         currentConnection = (currentConnection + 1) % NUMBER_OF_CONNECTIONS;
         return cache.getUnchecked(currentConnection).getDeleteUserStatement();
     }
 
+    /**
+     *
+     * @param email User's email which need to be deleted
+     * @throws SQLException
+     */
     public static void deleteUser(String email) throws SQLException {
 
         PreparedStatement stmt = getDeleteUserStatement();
@@ -160,19 +262,30 @@ public class DBHelper {
                 throw e;
             }
         }
-
-        //System.out.println("Note with id= " + id + " has been deleted");
     }
 
+    /**
+     *
+     * @return PreparedStatement to get add note
+     * @throws SQLException
+     */
     private static PreparedStatement getAddNoteStatement() throws SQLException {
         return cache.getUnchecked(currentConnection).getAddNoteStatement();
     }
 
+    /**
+     *
+     * @param header Note's header to add
+     * @param firstName Note's creator name
+     * @param description Note' description to add
+     * @param email Note's creator email
+     * @return Note
+     * @throws SQLException
+     */
     public static Note addNote(String header, String firstName, String description, String email) throws SQLException {
 
         PreparedStatement stmt = getAddNoteStatement();
         ResultSet rs1;
-
         synchronized (stmt.getConnection()) {
             try {
                 stmt.setString(1, header);
@@ -185,10 +298,9 @@ public class DBHelper {
                 try (ResultSet rs = rs1) {
                     rs.next();
                     Integer id = rs.getInt(1);
-                    //System.out.println("Insert into Notebook executed");
                     rs.close();
                     stmt.getConnection().commit();
-                    return new Note(id, header, firstName,description,email);
+                    return new Note(id, header, firstName, description, email);
                 }
             } catch (Exception e) {
                 stmt.getConnection().rollback();
@@ -196,15 +308,29 @@ public class DBHelper {
             }
         }
     }
+
+    /**
+     *
+     * @return PreparedStatement to create user
+     * @throws SQLException
+     */
     private static PreparedStatement getCreateUserStatement() throws SQLException {
         currentConnection = (currentConnection + 1) % NUMBER_OF_CONNECTIONS;
         return cache.getUnchecked(currentConnection).getCreateUserStatement();
     }
-    public static User createUser(String name, String lastName, String email, String password) throws SQLException {
 
+    /**
+     *
+     * @param name user's name to create
+     * @param lastName user's last name to create
+     * @param email user's email to create
+     * @param password user's password to create
+     * @return user
+     * @throws SQLException
+     */
+    public static User createUser(String name, String lastName, String email, String password) throws SQLException {
         PreparedStatement stmt = getCreateUserStatement();
         ResultSet rs1;
-
         synchronized (stmt.getConnection()) {
             try {
                 stmt.setString(1, name);
@@ -216,24 +342,29 @@ public class DBHelper {
                 rs1.close();
                 stmt.getConnection().commit();
                 return new User(name, lastName, email, password);
-                /*try (ResultSet rs = rs1) {
-                    rs.next();
-                    Integer id = rs.getInt(1);
-                    System.out.println("Insert into User executed");
-
-
-
-                }*/
             } catch (Exception e) {
                 stmt.getConnection().rollback();
                 throw e;
             }
         }
     }
+
+    /**
+     *
+     * @return PreparedStatement to get user by email
+     * @throws SQLException
+     */
     private static PreparedStatement getUserStatement() throws SQLException {
         currentConnection = (currentConnection + 1) % NUMBER_OF_CONNECTIONS;
         return cache.getUnchecked(currentConnection).getGetUserStatement();
     }
+
+    /**
+     *
+     * @param email user's email
+     * @return user
+     * @throws SQLException
+     */
     public static User getUserByEmail (String email) throws SQLException {
         PreparedStatement stmt = getUserStatement();
         stmt.setString(1, email);
@@ -246,19 +377,25 @@ public class DBHelper {
         return  new User(firstName, lastName, mail, password);
     }
 
+    /**
+     *
+     * @return PreparedStatement to get all users
+     * @throws SQLException
+     */
     private static PreparedStatement getAllUsersStatement() throws SQLException {
         currentConnection = (currentConnection + 1) % NUMBER_OF_CONNECTIONS;
         return cache.getUnchecked(currentConnection).getUserStatement();
     }
 
+    /**
+     *
+     * @return list of users
+     * @throws SQLException
+     */
     public static List<User> getAllUsers () throws SQLException {
-
         List<User> result = new LinkedList<>();
-
         PreparedStatement stmt = getAllUsersStatement();
-
         ResultSet rs;
-
         synchronized (stmt.getConnection()) {
             rs = stmt.executeQuery();
             while (rs.next()) {

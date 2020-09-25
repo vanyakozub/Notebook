@@ -13,8 +13,6 @@
 <%@ page import="java.util.List" %>
 <%
     String email = (String)session.getAttribute("email");
-    /*System.out.println(email);
-    email = email.trim();*/
     if (email== null)
     {
         out.println("<table cellspacing=\"10\">\n"
@@ -37,29 +35,25 @@
     }
 %>
 <div id="notes", align="center">
-<%
-    try {
-        List<Note> noteList = DBHelper.getAllNotes();
-        for (Note note: noteList){
-            out.println("<div id=\"delete\", align=\"center\">");
-            out.println("<form method=\"GET\", action=\"DeleteNote\">\n");
-            out.println(/*"<p><input type=\"checkbox\" name=\"id\" value=\"\"><Br>\n"
-                    + */"<p><input type=\"hidden\" name=\"id\" value=\"" + note.getId() +"\">"
-                    + "   <p><input type=\"submit\" value=\"Удалить\"></p>");
-            out.println(/*"<h2>" + note.getId()+ "</h2>" + */"<h1>" + note.getName() +
-                    "<h1>" +note.getEmail() + "</h1>"
-                    + "</h1>" + "<h1>" + note.getHeader() + "</h1>");
-            out.println("<p>" + note.getDescription() + "</p>");
-        }
-    } catch (SQLException throwables) {
-        System.out.println("Не запустилось");
-        throwables.printStackTrace();
-    }
-%>
-</div>
-<div>
     <%
-        System.out.println("<p>" + email + "</p>");
+        try {
+            List<Note> noteList = DBHelper.getAllNotes();
+            for (Note note: noteList){
+                if (note.getEmail().equals(email)) {
+                    out.println("<div id=\"delete\", align=\"center\">");
+                    out.println("<form method=\"GET\", action=\"DeleteNote\">\n");
+                    out.println("<p><input type=\"hidden\" name=\"id\" value=\"" + note.getId() +"\">"
+                            + "   <p><input type=\"submit\" value=\"Удалить\"></p>");
+                }
+                out.println("<h1>" + note.getName()
+                        + "<h1>" +note.getEmail() + "</h1>"
+                        + "</h1>" + "<h1>" + note.getHeader() + "</h1>");
+                out.println("<p>" + note.getDescription() + "</p>");
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Не запустилось");
+            throwables.printStackTrace();
+        }
     %>
 </div>
 </body>

@@ -19,7 +19,6 @@ public class AddNote extends javax.servlet.http.HttpServlet {
                     request.getParameter("description"),
                     (String) request.getSession().getAttribute("email"));
         } catch (SQLException ex) {
-            System.out.println("something went wrong at insert stage");
             ex.printStackTrace();
         }
         response.sendRedirect("Main");

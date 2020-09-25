@@ -124,7 +124,7 @@ public class Note {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != getClass()) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
         Note note = (Note) o;

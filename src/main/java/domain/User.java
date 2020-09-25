@@ -111,7 +111,7 @@ public class User {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != getClass()) {
+        if (o == null || o.getClass() != this.getClass()) {
             return false;
         }
         User user = (User) o;
