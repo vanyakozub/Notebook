@@ -9,6 +9,33 @@ public class ConnectionHolder {
     PreparedStatement deleteNoteStatement;
     PreparedStatement addNoteStatement;
     PreparedStatement userStatement;
+    PreparedStatement createUserStatement;
+    PreparedStatement deleteUserStatement;
+    PreparedStatement getUserStatement;
+
+    public PreparedStatement getGetUserStatement() {
+        return getUserStatement;
+    }
+
+    public void setGetUserStatement(PreparedStatement getUserStatement) {
+        this.getUserStatement = getUserStatement;
+    }
+
+    public PreparedStatement getDeleteUserStatement() {
+        return deleteUserStatement;
+    }
+
+    public void setDeleteUserStatement(PreparedStatement deleteUserStatement) {
+        this.deleteUserStatement = deleteUserStatement;
+    }
+
+    public PreparedStatement getCreateUserStatement() {
+        return createUserStatement;
+    }
+
+    public void setCreateUserStatement(PreparedStatement createUserStatement) {
+        this.createUserStatement = createUserStatement;
+    }
 
     public Connection getConnection() {
         return connection;

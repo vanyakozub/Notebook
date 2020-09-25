@@ -53,5 +53,4 @@ public class AddNote extends javax.servlet.http.HttpServlet {
                 + "</body>\n"
                 + "</html>");
     }
-
 }

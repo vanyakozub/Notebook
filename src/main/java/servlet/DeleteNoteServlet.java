@@ -1,8 +1,11 @@
 package servlet;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
-public class LogoutServlet extends javax.servlet.http.HttpServlet {
+import dao.DBHelper;
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+public class DeleteNoteServlet extends javax.servlet.http.HttpServlet {
     protected void doPost(final javax.servlet.http.HttpServletRequest request,
                           final javax.servlet.http.HttpServletResponse response)
             throws javax.servlet.ServletException, IOException {
@@ -11,9 +14,12 @@ public class LogoutServlet extends javax.servlet.http.HttpServlet {
     protected void doGet(final javax.servlet.http.HttpServletRequest request,
                          final javax.servlet.http.HttpServletResponse response)
             throws javax.servlet.ServletException, IOException {
-        HttpSession session = request.getSession();
-        session.invalidate();
+        try {
+            DBHelper.deleteNote((Integer.parseInt(request.getParameter("id"))));
+        } catch (SQLException ex) {
+            System.out.println("something went wrong at delete stage");
+            ex.printStackTrace();
+        }
         response.sendRedirect("Main");
     }
-
 }

@@ -10,21 +10,23 @@ import java.sql.SQLException;
 @WebListener
 public class ContextListener implements ServletContextListener {
     @Override
-    public void contextInitialized(ServletContextEvent sce) {
+    public void contextInitialized(final ServletContextEvent sce) {
         try {
             //start database
             Class.forName("org.postgresql.Driver");
             DBHelper.init();
-        } catch (SQLException | IOException | ClassNotFoundException ex ) {
+        } catch (SQLException | IOException | ClassNotFoundException ex) {
             System.out.println("Exception in context initialized listener " + ex);
         }
     }
     @Override
-    public void contextDestroyed(ServletContextEvent sce) {
+    public void contextDestroyed(final ServletContextEvent sce) {
         try {
             //stop database
-            DBHelper.getInitialConnection().close();
-        } catch (SQLException ex) {
+            if (DBHelper.getInitialConnection() != null) {
+                DBHelper.getInitialConnection().close();
+            }
+        } catch (SQLException | NullPointerException ex) {
             System.out.println("Exception in context destroyed listener " + ex);
         }
     }

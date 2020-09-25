@@ -29,6 +29,14 @@
         <url-pattern>/AddNote</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>DeleteNote</servlet-name>
+        <servlet-class>servlet.DeleteNoteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteNote</servlet-name>
+        <url-pattern>/DeleteNote</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>Logout</servlet-name>
         <servlet-class>servlet.LogoutServlet</servlet-class>
     </servlet>

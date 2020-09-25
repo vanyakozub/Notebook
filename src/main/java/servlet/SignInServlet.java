@@ -114,7 +114,7 @@ public class SignInServlet extends javax.servlet.http.HttpServlet{
             }
 
             HttpSession session = request.getSession();
-            session.setMaxInactiveInterval(-1);
+            session.setMaxInactiveInterval(180);
             session.setAttribute("email", email);
             session.setAttribute("firstname", firstName);
 
