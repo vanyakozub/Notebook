@@ -3,7 +3,8 @@
 <head>
     <title>Notebook</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="First.css">
+    <link rel="stylesheet" href="FirstCSS.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
 </head>
 
 <body>
@@ -17,39 +18,46 @@
     {
         out.println("<table cellspacing=\"10\">\n"
                 + "    <tr>\n"
-                + "        <td><h1><a href=\"\\Signin\"> Регистрация</a></h1></td>\n"
-                + "        <td><h1><a href=\"\\Login\"> Вход</a></h1></td>\n"
+                + "        <td><h2><a href=\"\\Signin\"> Registration </a></h2></td>\n"
+                + "        <td><h2><a href=\"\\Login\"> Login </a></h2></td>\n"
                 + "    </tr>\n"
                 + "</table>\n");
     }
     else {
         out.println("<h1>Welcome, " + session.getAttribute("firstname") + "</h1>");
         out.println("<table cellspacing=\"10\">\n"
-                + "    <tr>\n" + "        <td><a href=\"\\Logout\"> Выйти</a></td>\n"
+                + "    <tr>\n" + "        <td><a href=\"\\Logout\"> Logout</a></td>\n"
                 + "    </tr>\n"
                 + "</table>\n");
         out.println("<div id=\"sign\", align=\"center\">");
         out.println("<form method=\"GET\", action=\"AddNote\">\n");
-        out.println("    <p><input type=\"submit\" value=\"Добавить запись\"></p>\n"
+        out.println("<input type=\"submit\" value=\"Add note\">\n"
                 + "</form></div>");
     }
 %>
-<div id="notes", align="center">
+<div id="notes">
     <%
         try {
             List<Note> noteList = DBHelper.getAllNotes();
+            out.println("<div class=\"container\">\n<div class=\"row\">");
             for (Note note: noteList){
+                out.println("<div class=\"col-md-3 col-sm-6\">\n"
+                        + " <div class=\"our-team\">\n"
+                        + " <div class=\"pic\">");
+                out.println("<h4 class=\"title\">" + note.getHeader() + "</h4>" + " </div>");
+                out.println("<div class=\"team-content\">");
+                out.println("<h4>" + note.getDescription() + "</h4>");
+                out.println("<span class=\"post\">" + note.getName() + ", " + "</span>");
+                out.println("<span class=\"post\">" + note.getEmail() + "</span>");
                 if (note.getEmail().equals(email)) {
                     out.println("<div id=\"delete\", align=\"center\">");
                     out.println("<form method=\"GET\", action=\"DeleteNote\">\n");
                     out.println("<p><input type=\"hidden\" name=\"id\" value=\"" + note.getId() +"\">"
-                            + "   <p><input type=\"submit\" value=\"Удалить\"></p>");
+                            + "   <p><input type=\"submit\" value=\"Delete\"></p>\n</form>\n</div>");
                 }
-                out.println("<h1>" + note.getName()
-                        + "<h1>" +note.getEmail() + "</h1>"
-                        + "</h1>" + "<h1>" + note.getHeader() + "</h1>");
-                out.println("<p>" + note.getDescription() + "</p>");
+                out.println("</div>\n" + " </div>\n" + " </div>");
             }
+            out.println("</div></div>");
         } catch (SQLException throwables) {
             System.out.println("Не запустилось");
             throwables.printStackTrace();
