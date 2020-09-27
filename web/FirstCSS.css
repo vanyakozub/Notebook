@@ -3,6 +3,10 @@
     position: relative; }
 table {
     border-spacing: 7px 11px;
+    padding: 10px;
+}
+tr {
+    padding: 10px;
 }
 td {
     padding: 10px;
@@ -56,6 +60,7 @@ td {
 .our-team{
     background: #f5f5f5;
     text-align: center;
+    padding-bottom: 10px;
 }
 .our-team .pic{
     position: relative;
@@ -79,7 +84,9 @@ td {
     height: auto;
 }
 
-
+#description {
+    height: 200px;
+}
 .our-team .team-content{
     padding: 20px 0;
 }

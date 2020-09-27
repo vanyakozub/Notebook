@@ -14,12 +14,12 @@ public class DBHelperTest {
     public void setUp() throws Exception {
         DBHelper.init();
     }
-
+    private static Note note = new Note(34,"Test", "James", "Junit test", "Cameron@gmail.com");
+    private static Note note1;
     @Test
     public void whenAddNoteReturnNewNote() {
         try {
-            Note note = new Note(34,"Test", "James", "Junit test", "Cameron@gmail.com");
-            assertEquals(note, DBHelper.addNote(note.getHeader(), note.getName(), note.getDescription(), note.getEmail()));
+            assertEquals(note, note1 = DBHelper.addNote(note.getHeader(), note.getName(), note.getDescription(), note.getEmail()));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -38,7 +38,7 @@ public class DBHelperTest {
         try {
             List<Note> list = DBHelper.getAllNotes();
             int size = list.size() - 1;
-            DBHelper.deleteNote(list.get(size).getId());
+            DBHelper.deleteNote(note1.getId());
             assertEquals(size, DBHelper.getAllNotes().size());
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -53,7 +53,6 @@ public class DBHelperTest {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
     }
 
     @Test
@@ -61,7 +60,7 @@ public class DBHelperTest {
         try {
             List<User> list = DBHelper.getAllUsers();
             int size = list.size() - 1;
-            DBHelper.deleteUser(list.get(size).getEmail());
+            DBHelper.deleteUser("vanyakozub@mail.ru");
             assertEquals(size, DBHelper.getAllUsers().size());
         } catch (SQLException ex) {
             ex.printStackTrace();

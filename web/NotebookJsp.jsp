@@ -4,7 +4,7 @@
     <title>Notebook</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="FirstCSS.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" />
 </head>
 
 <body>
@@ -18,10 +18,10 @@
     {
         out.println("<table cellspacing=\"10\">\n"
                 + "    <tr>\n"
-                + "        <td><h2><a href=\"\\Signin\"> Registration </a></h2></td>\n"
-                + "        <td><h2><a href=\"\\Login\"> Login </a></h2></td>\n"
+                + "        <td><a href=\"\\Signin\"> Registration </a></td>\n"
+                + "        <td><a href=\"\\Login\"> Login</a></td>\n"
                 + "    </tr>\n"
-                + "</table>\n");
+                + "</table>");
     }
     else {
         out.println("<h1>Welcome, " + session.getAttribute("firstname") + "</h1>");
@@ -46,7 +46,7 @@
                         + " <div class=\"pic\">");
                 out.println("<h4 class=\"title\">" + note.getHeader() + "</h4>" + " </div>");
                 out.println("<div class=\"team-content\">");
-                out.println("<h4>" + note.getDescription() + "</h4>");
+                out.println("<h5>" + note.getDescription() + "</h5>");
                 out.println("<span class=\"post\">" + note.getName() + ", " + "</span>");
                 out.println("<span class=\"post\">" + note.getEmail() + "</span>");
                 if (note.getEmail().equals(email)) {

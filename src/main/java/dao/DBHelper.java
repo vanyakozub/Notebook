@@ -374,6 +374,7 @@ public class DBHelper {
         String lastName = rs.getString(LASTNAME);
         String mail = rs.getString(EMAIL);
         String password = rs.getString(PASSWORD);
+        rs.close();
         return  new User(firstName, lastName, mail, password);
     }
 
@@ -406,6 +407,7 @@ public class DBHelper {
                 User user = new User(firstName, lastName, email, password);
                 result.add(user);
             }
+            rs.close();
         }
         return result;
     }

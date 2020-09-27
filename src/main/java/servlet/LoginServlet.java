@@ -29,17 +29,32 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
         } catch(NoSuchAlgorithmException | SQLException e) {
             e.printStackTrace();
         }
-        if (!email.contentEquals(user.getEmail()) || !hashPassword.contentEquals(user.getPassword())) {
-            error.append("Wrong email or password. ");
+        if (email != null || user.getEmail() != null) {
+            if (!email.contentEquals(user.getEmail()) || !hashPassword.contentEquals(user.getPassword())) {
+                error.append("Wrong email or password. ");
+            }
         }
+        else {
+            error.append("No such e-mail. ");
+        }
+
         PrintWriter pw = response.getWriter();
         pw.write("<!DOCTYPE html>");
         pw.write("<html>");
         pw.write("  <head>\n"
                 + "    <meta charset=\"utf-8\">\n"
                 + "    <title>Login</title>\n"
-                + "<link rel=\"stylesheet\" href=\"First.css\">"
+                + "<link rel=\"stylesheet\" href=\"FirstCSS.css\">"
+                + "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css\" />"
                 + "  </head>");
+        pw.write("<body>\n"
+                + "\n"
+                + "<table cellspacing=\"10\">\n"
+                + "    <tr>\n"
+                + "        <td><a href=\"\\Main\">Back</a></td>\n"
+                + "    </tr>\n"
+                + "</table>");
+        pw.write("<div id=\"sign\", align=\"center\">");
         pw.write(getInputForm());
         if (!error.toString().isEmpty()) {
             pw.write("    <div id=\"error\">Error: " + error + "</div>");
@@ -63,38 +78,45 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
         pw.write("  <head>\n"
                 + "    <meta charset=\"utf-8\">\n"
                 + "    <title>Login</title>\n"
-                + "<link rel=\"stylesheet\" href=\"First.css\">"
+                + "<link rel=\"stylesheet\" href=\"FirstCSS.css\">"
+                + "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css\" />"
                 + "  </head>");
         pw.write("<body>\n"
                 + "\n"
                 + "<table cellspacing=\"10\">\n"
                 + "    <tr>\n"
-                + "        <td><a href=\"\\Main\"> Назад</a></td>\n"
+                + "        <td><a href=\"\\Main\">Back</a></td>\n"
                 + "    </tr>\n"
                 + "</table>");
         pw.write("<div id=\"sign\", align=\"center\">");
-        pw.write("<form method=\"POST\", action=\"Login\">\n"
+        pw.write(this.getInputForm());
+        /*pw.write("<form method=\"POST\", action=\"Login\">\n"
                 + "    <p>e-mail <input type=\"text\", name=\"e-mail\"></p>\n"
                 + "    <p>password <input type=\"password\", name=\"password\"></p>\n"
                 + "    <p><input type=\"submit\" value=\"Submit!\"></p>\n"
-                + "</form>");
+                + "</form>");*/
         pw.write("</div>\n</body>\n</html>");
     }
-        public static String getInputForm() {
-            StringBuffer sb = new StringBuffer();
-            sb.append("<body>\n");
-            sb.append("\n");
-            sb.append("<table cellspacing=\"10\">\n");
-            sb.append("    <tr>\n");
-            sb.append("        <td><a href=\"Main\"> Назад</a></td>");
-            sb.append("    </tr>");
-            sb.append("</table>");
-            sb.append("<div id=\"sign\", align=\"center\">");
-            sb.append("<form method=\"POST\\\", action=\"Login\">");
-            sb.append("<p>e-mail <input type=\"text\", name=\"e-mail\"></p>");
-            sb.append("<p>password <input type=\"password\", name=\"password\"></p>");
-            sb.append("<p><input type=\"submit\" value=\"Submit!\"></p>");
-            sb.append("</form>");
-            return sb.toString();
-        }
+    public static String getInputForm() {
+        return new String("<div class=\"p-x-1 p-y-3\">\n"
+                + " <form class=\"card card-block m-x-auto bg-faded form-width\" method=\"POST\", action=\"Login\">\n"
+                + " <legend class=\"m-b-1 text-xs-center\">Login</legend>\n"
+                + " <div class=\"form-group input-group\">\n"
+                + " <span class=\"input-group-addon\">@</span>\n"
+                + " <span class=\"has-float-label\">\n"
+                + " <input class=\"form-control\" id=\"email\" type=\"email\" placeholder=\"name@example.com\" name='e-mail'/>\n"
+                + " <label for=\"email\">E-mail</label>\n"
+                + " </span>\n"
+                + " </div>\n"
+                + " <div class=\"form-group has-float-label\">\n"
+                + " <input class=\"form-control\" id=\"password\" type=\"password\" placeholder=\"********\" name='password'/>\n"
+                + " <label for=\"password\">Password</label>\n"
+                + " </div>\n"
+                + " <div class=\"text-xs-center\">\n"
+                + " <button class=\"btn btn-block btn-primary\" type=\"submit\">Login</button>\n"
+                + " </div>\n"
+                + " </form>\n"
+                + "</div>");
+    }
+
 }
