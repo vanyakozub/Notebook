@@ -24,7 +24,7 @@ Registration form
 
 ![Image 4](https://github.com/vanyakozub/IMG-for-PaperIO/raw/master/4.jpg)
 
-Login form
+Adding note form
 
 ### Technology Stack:
 
