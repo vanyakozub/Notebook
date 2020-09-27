@@ -24,17 +24,15 @@ public class DBHelperStressTest {
             public void run() {
                 try {
                     int num = NoteNumber.incrementAndGet();
-                    //String header = "header" + num;
-                    //String name = "name" + num;
-                    //String description = "description" + num;
+                    String header = "header" + num;
+                    String name = "name" + num;
+                    String description = "description" + num;
                     String email = "email" + num + "@mail.ru";
-                    //DBHelper.createUser(name, header, name, email);
-                    //Integer id = DBHelper.addNote(header,name, description, email).getId();
-                    //List<Batch> batchBySchool = DBHelper.getBatchBySchool(id);
-                    //DBHelper.deleteNote(id);
+                    DBHelper.createUser(name, header, name, email);
+                    Integer id = DBHelper.addNote(header,name, description, email).getId();
+                    DBHelper.deleteNote(id);
                     DBHelper.deleteUser(email);
                     if (num % 10000 ==0)
-                        //to avoid suppression of this message by logback-test.xml settings
                         System.out.println("Performed test #"+num);
 
                 } catch (SQLException ex) {

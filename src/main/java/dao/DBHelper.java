@@ -369,11 +369,16 @@ public class DBHelper {
         PreparedStatement stmt = getUserStatement();
         stmt.setString(1, email);
         ResultSet rs = stmt.executeQuery();
-        rs.next();
-        String firstName = rs.getString(FIRSTNAME);
-        String lastName = rs.getString(LASTNAME);
-        String mail = rs.getString(EMAIL);
-        String password = rs.getString(PASSWORD);
+        String firstName = new String();
+        String lastName = new String();
+        String mail = new String();
+        String password = new String();
+        while (rs.next()) {
+            firstName = rs.getString(FIRSTNAME);
+            lastName = rs.getString(LASTNAME);
+            mail = rs.getString(EMAIL);
+            password = rs.getString(PASSWORD);
+        }
         rs.close();
         return  new User(firstName, lastName, mail, password);
     }

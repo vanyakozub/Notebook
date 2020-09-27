@@ -22,7 +22,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>AddNote</servlet-name>
-        <servlet-class>servlet.AddNote</servlet-class>
+        <servlet-class>servlet.AddNoteServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>AddNote</servlet-name>

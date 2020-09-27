@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import dao.DBHelper;
 
-public class AddNote extends javax.servlet.http.HttpServlet {
+public class AddNoteServlet extends javax.servlet.http.HttpServlet {
     @Override
     protected void doPost(final javax.servlet.http.HttpServletRequest request,
                           final javax.servlet.http.HttpServletResponse response)

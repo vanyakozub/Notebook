@@ -14,6 +14,7 @@ public class DBHelperTest {
     public void setUp() throws Exception {
         DBHelper.init();
     }
+
     private static Note note = new Note(34,"Test", "James", "Junit test", "Cameron@gmail.com");
     private static Note note1;
     @Test

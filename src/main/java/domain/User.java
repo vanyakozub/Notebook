@@ -115,7 +115,7 @@ public class User {
             return false;
         }
         User user = (User) o;
-        if (this.email != user.email) {
+        if (!this.email.equals(user.email)) {
             return false;
         }
         return true;

@@ -128,7 +128,7 @@ public class Note {
             return false;
         }
         Note note = (Note) o;
-        if (this.header != note.header || this.email != note.email) {
+        if (!this.header.equals(note.header) || !this.email.equals(note.email)) {
             return false;
         }
         return true;

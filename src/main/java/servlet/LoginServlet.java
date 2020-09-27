@@ -90,11 +90,6 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
                 + "</table>");
         pw.write("<div id=\"sign\", align=\"center\">");
         pw.write(this.getInputForm());
-        /*pw.write("<form method=\"POST\", action=\"Login\">\n"
-                + "    <p>e-mail <input type=\"text\", name=\"e-mail\"></p>\n"
-                + "    <p>password <input type=\"password\", name=\"password\"></p>\n"
-                + "    <p><input type=\"submit\" value=\"Submit!\"></p>\n"
-                + "</form>");*/
         pw.write("</div>\n</body>\n</html>");
     }
     public static String getInputForm() {
